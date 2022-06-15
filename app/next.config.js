@@ -9,6 +9,10 @@ module.exports = {
     domains: ['global-uploads.webflow.com', 'avatars.githubusercontent.com', 'open.rocket.chat', 'media-exp1.licdn.com']
   },
   webpack: (config, { isServer }) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      react: path.resolve("./node_modules/react"),
+    }
     // Fixes npm packages that depend on `fs` module
     if (!isServer) {
       config.resolve.fallback = {
