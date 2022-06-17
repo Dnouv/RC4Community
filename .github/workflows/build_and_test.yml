@@ -48,7 +48,7 @@ jobs:
             core.info('waiting 10 minute for strapi data initialization to complete ..');
             await new Promise(zzz => setTimeout(zzz, 10 * 60 * 1000));
             http
-              .request(`http://localhost:${process.env.PORT}/_health`, { method: 'HEAD' }, r => {
+              .request(`http://127.0.0.1:${process.env.PORT}/_health`, { method: 'HEAD' }, r => {
                 if (r.statusCode === 204 && r.headers.strapi === 'You are so French!')
                   {
                     core.info('cms successfully started')
