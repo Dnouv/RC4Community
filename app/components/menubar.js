@@ -11,6 +11,8 @@ import BrandLogo from './brandlogo';
 import { Navbar, Nav, NavDropdown, Container, Dropdown } from 'react-bootstrap';
 import styles from '../styles/Menubar.module.css';
 import { useRCAuth4Google } from './auth/rc-auth-google/hooks/useRCAuth4Google';
+import { DummyLoginButton } from "./auth/dummy";
+import Meta from './wallet/connectMeta';
 
 const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
   <a
@@ -102,15 +104,7 @@ export default function Menubar(props) {
               );
             })}
           </Nav>
-          {user._id && (
-            <RocketChatLinkButton
-              className={`bg-danger bg-gradient p-2 text-white ${styles.chat}`}
-              user={user}
-              channel={'general'}
-            >
-              Click to Chat
-            </RocketChatLinkButton>
-          )}
+          <Meta bType={"warning"}/>
         </Navbar.Collapse>
         <div className='mx-3'>
           {userCookie && (
@@ -134,7 +128,7 @@ export default function Menubar(props) {
           )}
         </div>
         <div className='mx-2'>
-          <RCAuthGoogleLoginButton
+          {/* <RCAuthGoogleLoginButton
             user={user}
             handleLogin={handleLogin}
             handleLogout={handleLogout}
@@ -142,7 +136,8 @@ export default function Menubar(props) {
             isModalOpen={isModalOpen}
             setIsModalOpen={setIsModalOpen}
             method={method}
-          />
+          /> */}
+          <DummyLoginButton />
         </div>
       </Navbar>
     </Container>

@@ -11,11 +11,11 @@ import { FaWallet } from "react-icons/fa";
 import { connectAccount } from "../../lib/walletAPI";
 import styles from "../../styles/meta.module.css";
 
-const Meta = () => {
+const Meta = ({bType}) => {
   const [metaAccnt, setMetaAccnt] = useState("0x0");
   const [userBalance, setUserBalance] = useState(null);
   const [show, setShow] = useState(false);
-  const [buttonText, setButtonText] = useState("Connect to MetaMask");
+  const [buttonText, setButtonText] = useState("Connect");
   const [connected, setConnected] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -72,8 +72,8 @@ const Meta = () => {
       {connected ? (
         <ShowBalance balance={userBalance} account={metaAccnt} />
       ) : (
-        <Button onClick={getAccount}>
-          {<FaWallet />} {buttonText}
+        <Button onClick={getAccount} variant={bType || "primary"}>
+           {<FaWallet />}{" "}{buttonText}
         </Button>
       )}
       <ErrorModal err={"Please install MetaMask"} show={show} handleClose={handleClose} />
