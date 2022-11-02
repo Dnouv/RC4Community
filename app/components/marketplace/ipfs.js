@@ -1,10 +1,13 @@
-import { Button, Card, Spinner, Stack } from "react-bootstrap";
-import * as IPFS from "ipfs-core";
-import { useRef, useState } from "react";
+import { Button, ButtonGroup, Card, OverlayTrigger, Spinner, Stack } from 'react-bootstrap';
+import * as IPFS from 'ipfs-core';
+import { useRef, useState } from 'react';
+import { FaShare } from 'react-icons/fa';
+import Link from 'next/link'
+
 
 const IpfsAdder = ({ showText }) => {
   const [fileUrl, updateFileUrl] = useState(``);
-  const [cid, setCID] = useState("");
+  const [cid, setCID] = useState('');
   const [adding, setAdding] = useState(false);
 
   const hiddenInput = useRef(null);
@@ -14,9 +17,9 @@ const IpfsAdder = ({ showText }) => {
       setAdding(true);
       const file = e.target.files[0];
 
-      const ipfs = await IPFS.create({ repo: "ok" + Math.random() });
+      const ipfs = await IPFS.create({ repo: 'ok' + Math.random() });
 
-      console.log("ipfs", ipfs);
+      console.log('ipfs', ipfs);
       const { cid } = await ipfs.add(file);
       const url = `https://ipfs.io/ipfs/${cid.toString()}`;
       updateFileUrl(url);
@@ -25,7 +28,7 @@ const IpfsAdder = ({ showText }) => {
       setAdding(false);
     } catch (e) {
       setAdding(false);
-      console.error("An error occurred while uploading media", e);
+      console.error('An error occurred while uploading media', e);
     }
   };
 
@@ -34,34 +37,43 @@ const IpfsAdder = ({ showText }) => {
   };
 
   return (
-    <div className="mx-auto">
-      <Stack direction="vertical" gap={2}>
-        <Stack direction="horizontal" gap={2}>
-          <Button disabled={adding} onClick={handleInputClick}>
+    <div className='mx-auto'>
+      <Stack
+        direction='vertical'
+        gap={2}
+      >
+        <Stack
+          direction='horizontal'
+          gap={2}
+        >
+          <Button
+            disabled={adding}
+            onClick={handleInputClick}
+          >
             {adding ? (
               <Spinner
-                as="span"
-                animation="border"
-                size="sm"
-                role="status"
-                aria-hidden="true"
+                as='span'
+                animation='border'
+                size='sm'
+                role='status'
+                aria-hidden='true'
               />
             ) : (
               showText
             )}
           </Button>
           <input
-            type="file"
-            style={{ display: "none" }}
+            type='file'
+            style={{ display: 'none' }}
             ref={hiddenInput}
-            accept="image/*"
-            capture="camera"
+            accept='image/*'
+            capture='camera'
             onChange={getIPFS}
           />
           {cid && <Copy cid={cid} />}
         </Stack>
 
-        {fileUrl && <PreviewImage srcUrl={fileUrl} />}
+        {fileUrl && <PreviewImage srcUrl={fileUrl} cid={cid.toString()} />}
       </Stack>
     </div>
   );
@@ -71,10 +83,10 @@ const Copy = ({ cid }) => {
   const [isCopied, setIsCopied] = useState(false);
 
   async function copyTextToClipboard(text) {
-    if ("clipboard" in navigator) {
+    if ('clipboard' in navigator) {
       return await navigator.clipboard.writeText(text);
     } else {
-      return document.execCommand("copy", true, text);
+      return document.execCommand('copy', true, text);
     }
   }
 
@@ -92,26 +104,52 @@ const Copy = ({ cid }) => {
   };
 
   return (
-    <Stack gap={2} direction="horizontal">
-      <Button disabled variant="outline-dark">
+    <Stack
+      gap={2}
+      direction='horizontal'
+    >
+      <Button
+        disabled
+        variant='outline-dark'
+      >
         {cid.substr(0, 5)}...{cid.substr(cid.length - 5, cid.length)}
       </Button>
-      <Button variant="outline-dark" onClick={handleCopyClick}>
-        {isCopied ? "Copied" : "Copy"}
+      <Button
+        variant='outline-dark'
+        onClick={handleCopyClick}
+      >
+        {isCopied ? 'Copied' : 'Copy'}
       </Button>
     </Stack>
   );
 };
 
-const PreviewImage = ({ srcUrl }) => {
+const PreviewImage = ({ srcUrl, cid }) => {
+
   return (
-    <Card style={{ width: "18rem" }}>
-      <Card.Img variant="top" src={srcUrl} />
+    <Card style={{ width: '18rem' }}>
+      <Card.Img
+        variant='top'
+        src={srcUrl}
+      />
       <Card.Body>
         <Card.Title>Image Preview</Card.Title>
-        <Button href={srcUrl} target="_blank" variant="primary">
-          Visit on IPFS
-        </Button>
+        <ButtonGroup>
+          <Button
+            href={srcUrl}
+            target='_blank'
+            variant='primary'
+          >
+            Visit on IPFS
+          </Button>
+          <OverlayTrigger>
+            <Link href={`store/${cid}`}  target="_blank">
+            <Button variant='success'>
+              <FaShare />
+            </Button>
+            </Link>
+          </OverlayTrigger>
+        </ButtonGroup>
       </Card.Body>
     </Card>
   );
