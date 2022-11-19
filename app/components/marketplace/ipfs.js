@@ -16,6 +16,7 @@ import { MdSell } from 'react-icons/md';
 import Link from 'next/link';
 import { uploadtoStrapi } from './uploadCMS';
 import { fetchAPI } from '../../lib/api';
+import { getUserMail } from './helper';
 
 const IpfsAdder = ({ showText }) => {
   const [fileUrl, updateFileUrl] = useState(``);
@@ -157,8 +158,10 @@ const PreviewImage = ({ srcUrl, cid }) => {
   const strapiAdd = async (e) => {
     e.preventDefault()
     handleShow();
-    const productPayload = { ...productDetails, ['productCID']: cid };
     try {
+      const userMail = getUserMail()
+      const productPayload = { ...productDetails, ['productCID']: cid, ['umail']: userMail };
+
       await uploadtoStrapi(productPayload);
       setAlertShow(true);
       setErrMess(null);
