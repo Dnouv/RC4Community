@@ -1,4 +1,5 @@
 import {
+  Alert,
   Button,
   ButtonGroup,
   Card,
@@ -81,10 +82,10 @@ const IpfsAdder = ({ showText }) => {
             capture='camera'
             onChange={addIPFS}
           />
-          {cid && <Copy cid={cid} />}
+          {!adding && cid && <Copy cid={cid} />}
         </Stack>
 
-        {fileUrl && (
+        {!adding && fileUrl &&  (
           <PreviewImage
             srcUrl={fileUrl}
             cid={cid.toString()}
@@ -142,15 +143,30 @@ const Copy = ({ cid }) => {
 
 const PreviewImage = ({ srcUrl, cid }) => {
   const [show, setShow] = useState(false);
+  const [alertShow, setAlertShow] = useState(false);
+  const [errMess, setErrMess] = useState(null);
+
   const [productDetails, setProductDetails] = useState({});
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false)
+    setAlertShow(false)
+  };
   const handleShow = () => setShow(true);
 
-  const strapiAdd = async () => {
+  const strapiAdd = async (e) => {
+    e.preventDefault()
     handleShow();
     const productPayload = { ...productDetails, ['productCID']: cid };
-    await uploadtoStrapi(productPayload);
+    try {
+      await uploadtoStrapi(productPayload);
+      setAlertShow(true);
+      setErrMess(null);
+    } catch (e) {
+      console.log('An error on IPFS', e);
+      setAlertShow(true);
+      setErrMess('An error occurred!');
+    }
   };
 
   const handlePdForm = (e) => {
@@ -191,12 +207,14 @@ const PreviewImage = ({ srcUrl, cid }) => {
         handleClose={handleClose}
         handlePdForm={handlePdForm}
         strapiAdd={strapiAdd}
+        errMess={errMess}
+        alertShow={alertShow}
       />
     </Card>
   );
 };
 
-const ProductModal = ({ show, handleClose, handlePdForm, strapiAdd }) => {
+const ProductModal = ({ show, alertShow, handleClose, handlePdForm, strapiAdd, errMess }) => {
   return (
     <>
       <Modal
@@ -264,6 +282,21 @@ const ProductModal = ({ show, handleClose, handlePdForm, strapiAdd }) => {
             >
               Publish Product
             </Button>
+            {errMess ? (
+              <Alert
+                variant={'danger'}
+                show={alertShow}
+              >
+                {errMess}
+              </Alert>
+            ) : (
+              <Alert
+                variant={'success'}
+                show={alertShow}
+              >
+                Product successfully added to the Store
+              </Alert>
+            )}
           </Form>
         </Modal.Body>
       </Modal>
