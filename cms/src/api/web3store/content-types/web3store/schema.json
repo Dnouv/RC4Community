@@ -29,6 +29,11 @@
     "sellerEmail": {
       "type": "email",
       "required": true
+    },
+    "umail": {
+      "type": "email",
+      "required": true,
+      "unique": false
     }
   }
 }
