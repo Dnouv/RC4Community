@@ -1,9 +1,10 @@
 import Head from "next/head";
 import { Stack } from "react-bootstrap";
-import {useRouter} from "next/router"
+import { ListStoreItems } from "../../../components/marketplace/storeItems";
+import { fetchAPI } from "../../../lib/api";
 
-function Store() {
-  const router = useRouter()
+export default function Store(props) {
+  console.log("props", props)
   return (
     <div>
       <Head>
@@ -16,9 +17,21 @@ function Store() {
         <h1 className="mx-auto mt-3">
           Preview of Peer-to-Peer Sharing IPFS Store
         </h1>
+        <ListStoreItems storeItems={props.storeItems} />
       </Stack>
     </div>
   );
 }
 
-export default Store;
+export async function getStaticProps({ params }) {
+ 
+  const topNavItems = await fetchAPI('/top-nav-item');
+  const storeItems = await fetchAPI('/web3stores');
+
+  return {
+    props: { topNavItems, storeItems }
+    // Next.js will attempt to re-generate the page:
+    // - When a request comes in
+    // - At most once every 1 second
+  };
+}
