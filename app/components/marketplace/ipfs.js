@@ -154,7 +154,7 @@ const PreviewImage = ({ srcUrl, cid }) => {
   };
 
   const handlePdForm = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     const target = e.target.name;
     const value = e.target.value;
     setProductDetails({ ...productDetails, [target]: value });
@@ -177,7 +177,10 @@ const PreviewImage = ({ srcUrl, cid }) => {
             Visit on IPFS
           </Button>
           {/* <Link href={`store/${cid}`}  target="_blank"> */}
-          <Button variant='success' onClick={handleShow}>
+          <Button
+            variant='success'
+            onClick={handleShow}
+          >
             <MdSell /> Sell
           </Button>
           {/* </Link> */}
@@ -253,23 +256,16 @@ const ProductModal = ({ show, handleClose, handlePdForm, strapiAdd }) => {
                 onChange={handlePdForm}
               />
             </Form.Group>
+
             <Button
               variant='primary'
-              onClick={handleClose}
               type='submit'
+              style={{ float: 'right' }}
             >
-              Save Changes
+              Publish Product
             </Button>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant='secondary'
-            onClick={handleClose}
-          >
-            Close
-          </Button>
-        </Modal.Footer>
       </Modal>
     </>
   );
