@@ -1,12 +1,20 @@
-import { Button, ButtonGroup, Card, OverlayTrigger, Spinner, Stack } from 'react-bootstrap';
+import {
+  Button,
+  ButtonGroup,
+  Card,
+  Form,
+  Modal,
+  OverlayTrigger,
+  Spinner,
+  Stack,
+} from 'react-bootstrap';
 import * as IPFS from 'ipfs-core';
 import { useRef, useState } from 'react';
 import { FaShare } from 'react-icons/fa';
-import { MdSell } from 'react-icons/md'
-import Link from 'next/link'
+import { MdSell } from 'react-icons/md';
+import Link from 'next/link';
 import { uploadtoStrapi } from './uploadCMS';
 import { fetchAPI } from '../../lib/api';
-
 
 const IpfsAdder = ({ showText }) => {
   const [fileUrl, updateFileUrl] = useState(``);
@@ -76,7 +84,12 @@ const IpfsAdder = ({ showText }) => {
           {cid && <Copy cid={cid} />}
         </Stack>
 
-        {fileUrl && <PreviewImage srcUrl={fileUrl} cid={cid.toString()} />}
+        {fileUrl && (
+          <PreviewImage
+            srcUrl={fileUrl}
+            cid={cid.toString()}
+          />
+        )}
       </Stack>
     </div>
   );
@@ -128,11 +141,24 @@ const Copy = ({ cid }) => {
 };
 
 const PreviewImage = ({ srcUrl, cid }) => {
+  const [show, setShow] = useState(false);
+  const [productDetails, setProductDetails] = useState({});
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   const strapiAdd = async () => {
-    console.log("cloked me")
-    await uploadtoStrapi()
-  }
+    handleShow();
+    const productPayload = { ...productDetails, ['productCID']: cid };
+    await uploadtoStrapi(productPayload);
+  };
+
+  const handlePdForm = (e) => {
+    e.preventDefault()
+    const target = e.target.name;
+    const value = e.target.value;
+    setProductDetails({ ...productDetails, [target]: value });
+  };
 
   return (
     <Card style={{ width: '18rem' }}>
@@ -150,14 +176,102 @@ const PreviewImage = ({ srcUrl, cid }) => {
           >
             Visit on IPFS
           </Button>
-            {/* <Link href={`store/${cid}`}  target="_blank"> */}
-            <Button variant='success' onClick={strapiAdd}>
-              <MdSell />
-            </Button>
-            {/* </Link> */}
+          {/* <Link href={`store/${cid}`}  target="_blank"> */}
+          <Button variant='success' onClick={handleShow}>
+            <MdSell /> Sell
+          </Button>
+          {/* </Link> */}
         </ButtonGroup>
       </Card.Body>
+      <ProductModal
+        show={show}
+        handleClose={handleClose}
+        handlePdForm={handlePdForm}
+        strapiAdd={strapiAdd}
+      />
     </Card>
+  );
+};
+
+const ProductModal = ({ show, handleClose, handlePdForm, strapiAdd }) => {
+  return (
+    <>
+      <Modal
+        show={show}
+        onHide={handleClose}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Product Details Entry Form</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={strapiAdd}>
+            <Form.Group className='mb-3'>
+              <Form.Label>Product Name</Form.Label>
+              <Form.Control
+                type='text'
+                placeholder="Evan's Phone"
+                autoFocus
+                required
+                name='productName'
+                onChange={handlePdForm}
+              />
+            </Form.Group>
+            <Form.Group className='mb-3'>
+              <Form.Label>Contact Email</Form.Label>
+              <Form.Control
+                type='email'
+                placeholder='name@example.com'
+                autoFocus
+                required
+                name='sellerEmail'
+                onChange={handlePdForm}
+              />
+            </Form.Group>
+            <Form.Group className='mb-3'>
+              <Form.Label>Product Price (in $)</Form.Label>
+              <Form.Control
+                type='number'
+                placeholder='1200'
+                autoFocus
+                min={0}
+                required
+                name='productPrice'
+                onChange={handlePdForm}
+              />
+            </Form.Group>
+
+            <Form.Group
+              className='mb-3'
+              controlId='exampleForm.ControlTextarea1'
+            >
+              <Form.Label>Product Description</Form.Label>
+              <Form.Control
+                as='textarea'
+                rows={3}
+                required
+                name='productDescription'
+                onChange={handlePdForm}
+              />
+            </Form.Group>
+            <Button
+              variant='primary'
+              onClick={handleClose}
+              type='submit'
+            >
+              Save Changes
+            </Button>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant='secondary'
+            onClick={handleClose}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
   );
 };
 
