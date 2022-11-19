@@ -2,7 +2,10 @@ import { Button, ButtonGroup, Card, OverlayTrigger, Spinner, Stack } from 'react
 import * as IPFS from 'ipfs-core';
 import { useRef, useState } from 'react';
 import { FaShare } from 'react-icons/fa';
+import { MdSell } from 'react-icons/md'
 import Link from 'next/link'
+import { uploadtoStrapi } from './uploadCMS';
+import { fetchAPI } from '../../lib/api';
 
 
 const IpfsAdder = ({ showText }) => {
@@ -12,7 +15,7 @@ const IpfsAdder = ({ showText }) => {
 
   const hiddenInput = useRef(null);
 
-  const getIPFS = async (e) => {
+  const addIPFS = async (e) => {
     try {
       setAdding(true);
       const file = e.target.files[0];
@@ -68,7 +71,7 @@ const IpfsAdder = ({ showText }) => {
             ref={hiddenInput}
             accept='image/*'
             capture='camera'
-            onChange={getIPFS}
+            onChange={addIPFS}
           />
           {cid && <Copy cid={cid} />}
         </Stack>
@@ -126,6 +129,11 @@ const Copy = ({ cid }) => {
 
 const PreviewImage = ({ srcUrl, cid }) => {
 
+  const strapiAdd = async () => {
+    console.log("cloked me")
+    await uploadtoStrapi()
+  }
+
   return (
     <Card style={{ width: '18rem' }}>
       <Card.Img
@@ -142,13 +150,11 @@ const PreviewImage = ({ srcUrl, cid }) => {
           >
             Visit on IPFS
           </Button>
-          <OverlayTrigger>
-            <Link href={`store/${cid}`}  target="_blank">
-            <Button variant='success'>
-              <FaShare />
+            {/* <Link href={`store/${cid}`}  target="_blank"> */}
+            <Button variant='success' onClick={strapiAdd}>
+              <MdSell />
             </Button>
-            </Link>
-          </OverlayTrigger>
+            {/* </Link> */}
         </ButtonGroup>
       </Card.Body>
     </Card>

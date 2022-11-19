@@ -2,7 +2,7 @@ import Head from "next/head";
 import { Stack } from "react-bootstrap";
 import IpfsAdder from "../../components/marketplace/ipfs";
 
-function IPFSdemo() {
+function IPFSSell() {
   return (
     <div>
       <Head>
@@ -21,4 +21,4 @@ function IPFSdemo() {
   );
 }
 
-export default IPFSdemo;
+export default IPFSSell;
