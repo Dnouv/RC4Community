@@ -4,11 +4,12 @@ import { Button } from "react-bootstrap";
 import styles from "../styles/DummyLoginButton.module.css";
 import { useDummyAuth } from "../hooks/useDummyAuth";
 import Image from 'next/future/image';
+import NFTProfile from "../../../wallet/NFTprofile";
 
 export default function DummyLoginButton() {
   const [isLoginUiOpen, setIsLoginUiOpen] = useState(false);
-  const { user, handleLogin, handleLogout } = useDummyAuth();
-
+  const { user, handleLogin, handleLogout, handleProfileUpdate } = useDummyAuth();
+  
   return (
     <div className={styles.authDialogWrapper}>
       <div className={styles.avatar}>
@@ -23,6 +24,7 @@ export default function DummyLoginButton() {
                 alt={user.name}
                 height={42}
                 width={42}
+                style={{clipPath: user.pfpNFT ? "polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%)": "none"}}
               />
             ) : (
               <NoUserAvatar name={user?.name} size="42" />
@@ -42,6 +44,7 @@ export default function DummyLoginButton() {
                       alt={user.name}
                       height={64}
                       width={64}
+                      style={{clipPath: user.pfpNFT ? "polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%)": "none"}}
                     />
                   ) : (
                     <NoUserAvatar size="64" name={user.name} />
@@ -53,9 +56,11 @@ export default function DummyLoginButton() {
                 </div>
               </div>
               <div className="d-flex justify-content-center mb-4 mt-3 ml-3 mr-3">
-                <Button variant="secondary" onClick={handleLogout}>
+                  <NFTProfile limit={20} handleProfileUpdate={handleProfileUpdate} />
+                <Button variant="danger" onClick={handleLogout}>
                   Sign Out
                 </Button>
+                
               </div>
             </>
           ) : (

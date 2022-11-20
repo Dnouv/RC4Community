@@ -16,7 +16,7 @@ const UPSERT_NFT = gql`
   }
 `;
 
-const NFTProfile = ({ limit }) => {
+const NFTProfile = ({ limit, handleProfileUpdate }) => {
   const [assets, setAssets] = useState(null);
   const [showErr, setShowErr] = useState(false);
   const [bmess, setBmess] = useState("Set NFT profile");
@@ -92,6 +92,7 @@ const NFTProfile = ({ limit }) => {
         setLoad={setLoad}
         errMess={errMess}
         setErrMess={setErrMess}
+        handleProfileUpdate={handleProfileUpdate}
       />
     </>
   );
@@ -108,12 +109,15 @@ const GalleryModal = ({
   setLoad,
   errMess,
   setErrMess,
+  handleProfileUpdate
 }) => {
   const [upsertNFT, { data, loading, error, reset }] = useMutation(UPSERT_NFT);
 
   useEffect(() => {
     if (data) {
       setLoad(false);
+      handleProfileUpdate();
+      sessionStorage.setItem("nft_profile", JSON.stringify(data.upsertNFT))
     }
   }, [data, setLoad]);
 

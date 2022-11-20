@@ -1,7 +1,9 @@
 import React from 'react';
+import { Image } from 'react-bootstrap';
 import styles from '../../styles/Menubar.module.css';
 
-const NFTProfilePicture = ({ id }) => {
+const NFTProfilePicture = ({ id, imageUrl="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrD7zIqb5fsmcu_fSnnHkpQqzMccAHzX2reg&usqp=CAU" }) => {
+
   return (
     <div className={styles.nft_pfp}>
       <svg
@@ -16,7 +18,7 @@ const NFTProfilePicture = ({ id }) => {
             {/* replace the href with the nft link */}
             <image
               preserveAspectRatio='xMidYMid slice'
-              href='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrD7zIqb5fsmcu_fSnnHkpQqzMccAHzX2reg&usqp=CAU'
+              href={imageUrl}
               height='100%'
               width='100%'
             />
