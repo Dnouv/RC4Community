@@ -1,8 +1,26 @@
-import { Badge, Button, Card, Container, Image, Row } from 'react-bootstrap';
+import {
+  Badge,
+  Button,
+  Card,
+  Container,
+  Image,
+  OverlayTrigger,
+  Row,
+  Tooltip,
+} from 'react-bootstrap';
 import { FaShare } from 'react-icons/fa';
 import styles from '../../styles/ipfsStore.module.css';
 
 export const ListStoreItems = ({ storeItems }) => {
+  const renderTooltip = (props) => (
+    <Tooltip
+      id='button-tooltip'
+      {...props}
+    >
+      Share
+    </Tooltip>
+  );
+
   return (
     <Container>
       <Row className={styles.product_row}>
@@ -10,9 +28,16 @@ export const ListStoreItems = ({ storeItems }) => {
           return (
             <Card style={{ width: '18rem', marginBottom: '10px' }}>
               <Card.Header>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                  <span >
-                    <span style={{ fontWeight: '500' }}>Price: </span>${product.attributes.productPrice}
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'baseline',
+                  }}
+                >
+                  <span>
+                    <span style={{ fontWeight: '500' }}>Price: </span>$
+                    {product.attributes.productPrice}
                   </span>
                   <div>
                     <span style={{ fontWeight: '500' }}>Seller: </span>
@@ -38,8 +63,21 @@ export const ListStoreItems = ({ storeItems }) => {
                 </Card.Text>
               </Card.Body>
               <Card.Footer>
-              <Button href={`mailto:${product.attributes.sellerEmail}`} variant='primary'>Contact</Button>
-              <Button variant='success'><FaShare /></Button>
+                <Button
+                  href={`mailto:${product.attributes.sellerEmail}`}
+                  variant='primary'
+                >
+                  Contact
+                </Button>
+                <OverlayTrigger
+                  placement='right'
+                  delay={{ show: 250, hide: 400 }}
+                  overlay={renderTooltip}
+                >
+                  <Button variant='success'>
+                    <FaShare />
+                  </Button>
+                </OverlayTrigger>
               </Card.Footer>
             </Card>
           );
