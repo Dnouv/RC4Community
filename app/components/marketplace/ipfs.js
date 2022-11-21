@@ -193,7 +193,7 @@ const PreviewImage = ({ srcUrl, cid }) => {
             target='_blank'
             variant='primary'
           >
-            Visit on IPFS
+            Preview Image
           </Button>
           {/* <Link href={`store/${cid}`}  target="_blank"> */}
           <Button

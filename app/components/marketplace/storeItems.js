@@ -90,7 +90,7 @@ export const ListStoreItems = ({ storeItems }) => {
 const NFTImage = ({email}) => {
   const [callSpfQuery, {data, loading, error}] = getSpfUserDetails("")
   let pfpNFT = false
-  const [st, setSt] = useState()
+  const [nftPicURL, setNftPicURL] = useState()
 
 
   useEffect(() => {
@@ -100,12 +100,12 @@ const NFTImage = ({email}) => {
   if(data) {
     if (data?.findUserByEmail?.NFT.data.length>0) {
       pfpNFT=true
-      if (!st) {
+      if (!nftPicURL) {
         const getNFTData = async () => {
           try {
             const res = await fetchOpenSea(data.findUserByEmail.NFT.data[0].address, data.findUserByEmail.NFT.data[0].token)
             if (res?.image_url) {
-              setSt(res.image_url)
+              setNftPicURL(res.image_url)
             }
           } catch(e) {
             console.log("An error while fetching nft", e)
@@ -118,9 +118,9 @@ const NFTImage = ({email}) => {
   
 
   return (
-    <span onClick={() => console.log("clieck em", st)} style={{cursor: "pointer"}}>
+    <span onClick={() => console.log("clieck em")} style={{cursor: "pointer"}} id={pfpNFT ? nftPicURL : "https://ui-avatars.com/api/?name=Seller"}>
     <Image
-      src={pfpNFT ? st : "https://ui-avatars.com/api/?name=Seller"}
+      src={pfpNFT ? nftPicURL : "https://ui-avatars.com/api/?name=Seller"}
       width='50'
       height={50}
       roundedCircle={!pfpNFT}
