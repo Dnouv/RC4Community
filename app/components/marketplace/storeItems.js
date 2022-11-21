@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import {
   Badge,
   Button,
@@ -10,8 +11,10 @@ import {
 } from 'react-bootstrap';
 import { FaShare } from 'react-icons/fa';
 import styles from '../../styles/ipfsStore.module.css';
+import { getSpfUserDetails } from './helper';
 
 export const ListStoreItems = ({ storeItems }) => {
+
   const renderTooltip = (props) => (
     <Tooltip
       id='button-tooltip'
@@ -41,12 +44,8 @@ export const ListStoreItems = ({ storeItems }) => {
                   </span>
                   <div>
                     <span style={{ fontWeight: '500' }}>Seller: </span>
-                    <Image
-                      src='https://i.seadn.io/gae/_JxArw1cGyJt17cQ5Eb02-BQ6Dk3hc5L_fipm3mfv9wP_uDNr8HlDtLyEy_JHVee04TwzwdPsUPEUCIZmbw2hF_K9y4M3P80lfsKcw'
-                      roundedCircle
-                      width='50'
-                      height={50}
-                    />
+                    
+                    <NFTImage email={product.attributes.umail} />
                   </div>
                 </div>
               </Card.Header>
@@ -86,3 +85,32 @@ export const ListStoreItems = ({ storeItems }) => {
     </Container>
   );
 };
+
+const NFTImage = ({email}) => {
+  const [callSpfQuery, {data, loading, error}] = getSpfUserDetails("")
+  let pfpNFT = false
+
+
+  useEffect(() => {
+    callSpfQuery(email)
+    
+  }, [])
+  if(data) {
+    if (data?.findUserByEmail?.NFT.data.length>0) {
+      pfpNFT=true
+    }
+  }
+  
+
+  return (
+    <span onClick={() => console.log("clieck em")} style={{cursor: "pointer"}}>
+    <Image
+      src='https://i.seadn.io/gae/_JxArw1cGyJt17cQ5Eb02-BQ6Dk3hc5L_fipm3mfv9wP_uDNr8HlDtLyEy_JHVee04TwzwdPsUPEUCIZmbw2hF_K9y4M3P80lfsKcw'
+      width='50'
+      height={50}
+      roundedCircle={!pfpNFT}
+      style={{clipPath: pfpNFT ? "polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%)": "none"}}
+    />
+    </span>
+  )
+}
