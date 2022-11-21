@@ -3,8 +3,10 @@ import {
   Badge,
   Button,
   Card,
+  Col,
   Container,
   Image,
+  Modal,
   OverlayTrigger,
   Row,
   Tooltip,
@@ -46,7 +48,7 @@ export const ListStoreItems = ({ storeItems }) => {
                   <div>
                     <span style={{ fontWeight: '500' }}>Seller: </span>
                     
-                    <NFTImage email={product.attributes.umail} />
+                    <NFTImage email={product.attributes.umail} id={product.attributes.id} />
                   </div>
                 </div>
               </Card.Header>
@@ -87,10 +89,33 @@ export const ListStoreItems = ({ storeItems }) => {
   );
 };
 
-const NFTImage = ({email}) => {
+const NFTImage = ({email, id}) => {
   const [callSpfQuery, {data, loading, error}] = getSpfUserDetails("")
   let pfpNFT = false
   const [nftPicURL, setNftPicURL] = useState()
+  const [nftData, setNftData] = useState()
+  const [nftDtlModal, setNftDtlModal] = useState(false)
+
+  const handleNFTClick = async (e, pfpNFT) => {
+    console.log("clicked", e.target, pfpNFT)
+    if (pfpNFT) {
+      try {
+        const res = await fetchOpenSea(data.findUserByEmail.NFT.data[0].address, data.findUserByEmail.NFT.data[0].token)
+        if (res?.image_url) {
+          setNftData(res)
+          setNftDtlModal(true)
+
+        }
+        
+      } catch(e) {
+        console.log("An error while fetching nft", e)
+      }
+    }
+  }
+
+  const onHide = () => {
+    setNftDtlModal(false)
+  }
 
 
   useEffect(() => {
@@ -106,27 +131,76 @@ const NFTImage = ({email}) => {
             const res = await fetchOpenSea(data.findUserByEmail.NFT.data[0].address, data.findUserByEmail.NFT.data[0].token)
             if (res?.image_url) {
               setNftPicURL(res.image_url)
+              // setNftData(res)
+
             }
+            
           } catch(e) {
             console.log("An error while fetching nft", e)
           }
         }
-        getNFTData()
+        setTimeout(async () => {
+          await getNFTData()
+
+        }, 2000)
       }
     }
   }
   
 
   return (
-    <span onClick={() => console.log("clieck em")} style={{cursor: "pointer"}} id={pfpNFT ? nftPicURL : "https://ui-avatars.com/api/?name=Seller"}>
+    <>
+    <span onClick={(e) => handleNFTClick(e, pfpNFT)} style={{cursor: "pointer"}} id={id}>
     <Image
       src={pfpNFT ? nftPicURL : "https://ui-avatars.com/api/?name=Seller"}
       width='50'
+      id={id}
       height={50}
       roundedCircle={!pfpNFT}
       style={{clipPath: pfpNFT ? "polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%)": "none"}}
     />
     </span>
+    <NftDetlModal show={nftDtlModal} onHide={onHide} ud={data} nftData={nftData} />
+    </>
+  )
+}
+
+const NftDetlModal = ({show, onHide, ud, nftData}) => {
+
+  return(
+  <Modal
+      show={show}
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+    >
+      <Modal.Header>
+        <Modal.Title id="contained-modal-title-vcenter">
+          NFT Details
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        
+        <Container>
+          <Row>
+          <Col xs lg="2">
+          <Image src={nftData?.image_url} fluid width={100} height={100} />
+          </Col>
+          <Col>
+          <Row>
+          <h4>{nftData?.name}</h4>
+          <span style={{fontWeight: "300", fontSize: "smaller"}}>Collection: {nftData?.collection?.name}</span>
+          <span style={{fontWeight: "300", fontSize: "smaller"}}>Owner: {ud?.findUserByEmail?.displayName}</span>
+          </Row>
+          </Col>
+          </Row>
+        </Container>
+
+      </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={onHide}>Close</Button>
+      </Modal.Footer>
+    </Modal>
   )
 }
 
