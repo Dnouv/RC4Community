@@ -12,6 +12,7 @@ import {
 import { FaShare } from 'react-icons/fa';
 import styles from '../../styles/ipfsStore.module.css';
 import { getSpfUserDetails } from './helper';
+import {fetchOpenSea} from "../../lib/walletAPI"
 
 export const ListStoreItems = ({ storeItems }) => {
 
@@ -89,6 +90,7 @@ export const ListStoreItems = ({ storeItems }) => {
 const NFTImage = ({email}) => {
   const [callSpfQuery, {data, loading, error}] = getSpfUserDetails("")
   let pfpNFT = false
+  const [st, setSt] = useState()
 
 
   useEffect(() => {
@@ -98,14 +100,27 @@ const NFTImage = ({email}) => {
   if(data) {
     if (data?.findUserByEmail?.NFT.data.length>0) {
       pfpNFT=true
+      if (!st) {
+        const getNFTData = async () => {
+          try {
+            const res = await fetchOpenSea(data.findUserByEmail.NFT.data[0].address, data.findUserByEmail.NFT.data[0].token)
+            if (res?.image_url) {
+              setSt(res.image_url)
+            }
+          } catch(e) {
+            console.log("An error while fetching nft", e)
+          }
+        }
+        getNFTData()
+      }
     }
   }
   
 
   return (
-    <span onClick={() => console.log("clieck em")} style={{cursor: "pointer"}}>
+    <span onClick={() => console.log("clieck em", st)} style={{cursor: "pointer"}}>
     <Image
-      src='https://i.seadn.io/gae/_JxArw1cGyJt17cQ5Eb02-BQ6Dk3hc5L_fipm3mfv9wP_uDNr8HlDtLyEy_JHVee04TwzwdPsUPEUCIZmbw2hF_K9y4M3P80lfsKcw'
+      src={pfpNFT ? st : "https://ui-avatars.com/api/?name=Seller"}
       width='50'
       height={50}
       roundedCircle={!pfpNFT}
@@ -114,3 +129,5 @@ const NFTImage = ({email}) => {
     </span>
   )
 }
+
+      // src='https://i.seadn.io/gae/_JxArw1cGyJt17cQ5Eb02-BQ6Dk3hc5L_fipm3mfv9wP_uDNr8HlDtLyEy_JHVee04TwzwdPsUPEUCIZmbw2hF_K9y4M3P80lfsKcw'
