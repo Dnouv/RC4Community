@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { Navbar, Nav, Container, Col, Row, Offcanvas } from 'react-bootstrap';
+import { Navbar, Nav, Container, Col, Row, Offcanvas, Stack } from 'react-bootstrap';
 import styles from '../../styles/Menubar.module.css';
 import { DummyLoginButton } from '../auth/dummy';
 import BrandLogo from '../brandlogo';
+import Meta from '../wallet/connectMeta';
 import NFTProfilePicture from './nftProfilePicture';
 
 const ArrowIcon = () => {
@@ -270,7 +271,11 @@ const DesktopNav = ({ nav_Items, nft }) => {
         )}
       </Nav>
       <div>
+        <Stack gap={3} direction="horizontal">
+      <Meta bType={"warning"} />
+
         {nft ? <NFTProfilePicture id='img1' /> : <DummyLoginButton />}
+        </Stack>
       </div>
     </Navbar>
   );
